@@ -1,6 +1,5 @@
-import { hashObject, isObject, getLabels } from "./util.ts";
+import { hashObject } from "./util.ts";
 import { validateLabel } from "./validation.ts";
-
 import { Metric } from "./metric.ts";
 import { LabelPairs } from "./interface.ts";
 
@@ -20,7 +19,6 @@ export class Counter extends Metric {
       throw new Error("It is not possible to decrease a counter");
     } else {
       validateLabel(this.labelNames, labelPairs);
-
       this.hashMap = setValue(this.hashMap, incValue, labelPairs, hash);
     }
   }
@@ -42,7 +40,6 @@ export class Counter extends Metric {
       name: this.name,
       type,
       values: Object.values(this.hashMap),
-      aggregator: this.aggregator,
     };
   }
 

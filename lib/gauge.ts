@@ -1,12 +1,10 @@
 import { setValue, hashObject } from "./util.ts";
 import { validateLabel as validateLabelPairs } from "./validation.ts";
-
 import { Metric } from "./metric.ts";
 import { LabelPairs } from "./interface.ts";
 
-const type = "gauge";
-
 export class Gauge extends Metric {
+  readonly type = "gauge";
   /**
 	 * Set a gauge to a value
 	 * @param {object} labelPairs - Object with labels and their values
@@ -30,19 +28,19 @@ export class Gauge extends Metric {
     }
   }
 
-  /**
-	 * Increment a gauge value
-	 * @param {object} labelPairs - Object with labels where key is the label key and value is label value. Can only be one level deep
-	 * @param {Number} value - Value to increment - if omitted, increment with 1
-	 * @returns {void}
-	 */
-  inc(labelPairs: any, value: number = 1) {
-    const data = convertLabelsAndValues(labelPairs, value);
-    this.set(
-      data.labelPairs,
-      this._getValue(data.labelPairs) + (data.value || 1),
-    );
-  }
+  // /**
+  //  * Increment a gauge value
+  //  * @param {object} labelPairs - Object with labels where key is the label key and value is label value. Can only be one level deep
+  //  * @param {Number} value - Value to increment - if omitted, increment with 1
+  //  * @returns {void}
+  //  */
+  // inc(labelPairs: any, value: number = 1) {
+  //   const data = convertLabelsAndValues(labelPairs, value);
+  //   this.set(
+  //     data.labelPairs,
+  //     this._getValue(data.labelPairs) + (data.value || 1),
+  //   );
+  // }
 
   /**
 	 * Decrement a gauge value
@@ -81,7 +79,7 @@ export class Gauge extends Metric {
     return {
       help: this.help,
       name: this.name,
-      type,
+      type: this.type,
       values: Object.values(this.hashMap),
       aggregator: this.aggregator,
     };

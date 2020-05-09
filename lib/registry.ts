@@ -14,7 +14,7 @@ function escapeLabelValue(str: any) {
 
 class Registry {
   _metrics: { [name: string]: Metric } = {};
-  _collectors = [];
+  _collectors: any[] = [];
   _defaultLabels: LabelPairs = {};
   constructor() {}
 
@@ -33,25 +33,27 @@ class Registry {
     for (const val of item.values) {
       if (defaultLabelNames.length > 0) {
         // Make a copy before mutating
-        val.labels = Object.assign({}, val.labels);
+        val.labelPairs = Object.assign({}, val.labelPairs);
 
         for (const labelName of defaultLabelNames) {
-          val.labels[labelName] = val.labels[labelName] ||
+          val.labelPairs[labelName] = val.labelPairs[labelName] ||
             this._defaultLabels[labelName];
         }
       }
 
       let metricName = item.name;
-
-      const keys = Object.keys(val.labels);
+      console.log(val);
+      const keys = Object.keys(val.labelPairs);
       const size = keys.length;
       if (size > 0) {
         let labels = "";
         let i = 0;
         for (; i < size - 1; i++) {
-          labels += `${keys[i]}="${escapeLabelValue(val.labels[keys[i]])}",`;
+          labels += `${keys[i]}="${
+            escapeLabelValue(val.labelPairs[keys[i]])
+          }",`;
         }
-        labels += `${keys[i]}="${escapeLabelValue(val.labels[keys[i]])}"`;
+        labels += `${keys[i]}="${escapeLabelValue(val.labelPairs[keys[i]])}"`;
         metricName += `{${labels}}`;
       }
 
@@ -61,17 +63,17 @@ class Registry {
     return `${help}\n${type}\n${values}`.trim();
   }
 
-  // metrics() {
-  //   let metrics = "";
+  metrics() {
+    const metrics: string[] = [];
 
-  //   this.collect();
+    this.collect();
 
-  //   for (const metric of this.getMetricsAsArray()) {
-  //     metrics += `${this.getMetricAsPrometheusString(metric)}\n\n`;
-  //   }
+    for (const metric of this.getMetricsAsArray()) {
+      metrics.push(`${this.getMetricAsPrometheusString(metric)}`);
+    }
 
-  //   return metrics.substring(0, metrics.length - 1);
-  // }
+    return metrics.join("\n\n");
+  }
 
   registerMetric(metric: Metric) {
     if (this._metrics[metric.name] && this._metrics[metric.name] !== metric) {
@@ -83,20 +85,20 @@ class Registry {
     this._metrics[metric.name] = metric;
   }
 
-  // registerCollector(collectorFn: any) {
-  //   if (this._collectors.includes(collectorFn)) {
-  //     return; // Silently ignore repeated registration.
-  //   }
-  //   this._collectors.push(collectorFn);
-  // }
+  registerCollector(collectorFn: any) {
+    if (this._collectors.includes(collectorFn)) {
+      return; // Silently ignore repeated registration.
+    }
+    this._collectors.push(collectorFn);
+  }
 
-  // collectors() {
-  //   return this._collectors;
-  // }
+  collectors() {
+    return this._collectors;
+  }
 
-  // collect() {
-  //   this._collectors.forEach((collector) => collector());
-  // }
+  collect() {
+    this._collectors.forEach((collector) => collector());
+  }
 
   clear() {
     this._metrics = {};
@@ -116,10 +118,10 @@ class Registry {
   //     if (item.values && defaultLabelNames.length > 0) {
   //       for (const val of item.values) {
   //         // Make a copy before mutating
-  //         val.labels = Object.assign({}, val.labels);
+  //         val.labelPairs = Object.assign({}, val.labelPairs);
 
   //         for (const labelName of defaultLabelNames) {
-  //           val.labels[labelName] = val.labels[labelName] ||
+  //           val.labelPairs[labelName] = val.labelPairs[labelName] ||
   //             this._defaultLabels[labelName];
   //         }
   //       }
