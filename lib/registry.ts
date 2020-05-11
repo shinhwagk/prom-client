@@ -71,7 +71,7 @@ class Registry {
       metrics.push(`${this.getMetricAsPrometheusString(metric)}`);
     }
 
-    return metrics.join("\n\n");
+    return metrics.join("\n\n") + "\n";
   }
 
   registerMetric(metric: Metric) {
