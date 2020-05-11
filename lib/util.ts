@@ -1,4 +1,4 @@
-import { Sha256 } from "https://deno.land/std/util/sha256.ts";
+import { Sha256 } from "https://deno.land/std/hash/sha256.ts";
 
 import { LabelPairs } from "./interface.ts";
 
