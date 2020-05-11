@@ -42,7 +42,6 @@ class Registry {
       }
 
       let metricName = item.name;
-      console.log(val);
       const keys = Object.keys(val.labelPairs);
       const size = keys.length;
       if (size > 0) {

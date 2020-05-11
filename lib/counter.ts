@@ -6,12 +6,6 @@ import { LabelPairs } from "./interface.ts";
 const type = "counter";
 
 export class Counter extends Metric {
-  /**
-	 * Increment counter
-	 * @param {object} labelPairs - What label you want to be incremented
-	 * @param {Number} value - Value to increment, if omitted increment with 1
-	 * @returns {void}
-	 */
   inc(incValue: number = 1, labelPairs: LabelPairs = {}): void {
     const hash = hashObject(labelPairs);
 
@@ -23,10 +17,6 @@ export class Counter extends Metric {
     }
   }
 
-  /**
-	 * Reset counter
-	 * @returns {void}
-	 */
   reset(): void {
     this.hashMap = {};
     if (this.labelNames.length === 0) {

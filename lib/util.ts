@@ -1,8 +1,10 @@
 import { Sha256 } from "https://deno.land/std/util/sha256.ts";
 
-function hash_sha256(initPWD: string) {
+import { LabelPairs } from "./interface.ts";
+
+function hash_sha256(str: string) {
   const sha256 = new Sha256();
-  sha256.update("initPWD");
+  sha256.update(str);
   return sha256.toString();
 }
 
@@ -25,7 +27,11 @@ export function getValueAsString(value: number) {
 //   delete hashMap[hash];
 // }
 
-export function setValue(hashMap: any, value: number, labelPairs: any) {
+export function setValue(
+  hashMap: any,
+  value: number,
+  labelPairs: LabelPairs = {},
+) {
   const hash: string = hashObject(labelPairs);
   hashMap[hash] = {
     value: value,
@@ -48,20 +54,19 @@ export function getLabels(
   }, {} as { [name: string]: string });
 }
 
-export function hashObject(labelPairs: any) {
-  let keys = Object.keys(labelPairs);
-  if (keys.length === 0) {
-    return "";
-  }
-  // if (keys.length > 1) {
-  //   keys = keys.sort();
-  // }
+export function hashObject(labelPairs: LabelPairs) {
+  const labelNames = Object.keys(labelPairs);
+  if (labelNames.length === 0) return "";
 
-  const hash: string[] = [];
-  for (const [k, v] of Object.entries(labelPairs)) {
-    hash.push(`${k}:${v}`);
-  }
-  return hash_sha256(hash.join(","));
+  const newLabelPairs = labelNames.sort().reduce(
+    (lps, ln) => {
+      lps[ln] = labelPairs[ln];
+      return lps;
+    },
+    {} as LabelPairs,
+  );
+
+  return hash_sha256(JSON.stringify(newLabelPairs));
 }
 
 export function isObject(obj: any) {

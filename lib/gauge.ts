@@ -5,24 +5,14 @@ import { LabelPairs } from "./interface.ts";
 
 export class Gauge extends Metric {
   readonly type = "gauge";
-  /**
-	 * Set a gauge to a value
-	 * @param {object} labelPairs - Object with labels and their values
-	 * @param {Number} value - Value to set the gauge to, must be positive
-	 * @returns {void}
-	 */
+
   set(labelPairs: LabelPairs = {}, value: number = 0) {
     validateLabelPairs(this.labelNames, labelPairs);
     this.hashMap = setValue(this.hashMap, value, labelPairs);
   }
 
-  /**
-	 * Reset gauge
-	 * @returns {void}
-	 */
   reset() {
     this.hashMap = {};
-
     if (this.labelNames.length === 0) {
       this.hashMap = setValue({}, 0, {});
     }
